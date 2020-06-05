@@ -1,0 +1,40 @@
+{{- define "app.envs" -}}
+- name: HTTP_PORT
+  value: "80"
+
+- name: KEYCLOAK_ADDR
+  value: "{{ .Values.keycloak.address }}"
+- name: SECRET
+  valueFrom:
+    secretKeyRef:
+      name: {{ include "app.fullname" . }}
+      key: keycloak-secret
+
+- name: JAEGER_ENABLED
+  value: "{{ .Values.jaeger.enabled }}"
+- name: JAEGER_HOST
+  value: "{{ .Values.jaeger.host }}"
+- name: JAEGER_PORT
+  value: "{{ .Values.jaeger.port }}"
+- name: JAEGER_PROTOCOL
+  value: "{{ .Values.jaeger.protocol }}"
+
+- name: DB_ADDR
+  value: "jdbc:postgresql://{{ .Values.db.host }}:{{ .Values.db.port }}/{{ .Values.db.name }}"
+- name: DB_USER
+  value: "{{ .Values.db.user }}"
+- name: DB_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ include "app.fullname" . }}
+      key: db-password
+
+## Arbitrary environment variables
+{{- range $name, $value := .Values.env }}
+{{- if not (empty $value) }}
+- name: {{ $name | quote }}
+  value: {{ $value | quote }}
+{{- end }}
+{{- end }}
+
+{{- end }}

@@ -1,0 +1,59 @@
+image:
+  repository: nexus.vagrant.local:5000/dummy_application
+  tag: "{{ .Chart.AppVersion }}"
+  pullPolicy: IfNotPresent
+
+replicas: 1
+
+resources: {}
+
+affinity: {}
+
+## Environment variables passed to the app
+keycloak:
+  address:
+  secret: ""
+
+jaeger:
+  enabled: false
+  host:
+  port: 14268
+  protocol: http
+
+db:
+  host:
+  name:
+  port: 5432
+  user:
+  password: ""
+
+## Arbitrary environment variables
+env:
+  # FOO: BAR
+
+service:
+  extraLabels: {}
+    # FOO: BAR
+
+ingress:
+  enabled: false
+  paths:
+    - /api
+    # - /*
+  hosts:
+    # - example.com
+  # tls:
+  #   - secretName: example-tls
+  #     hosts:
+  #       - example.com
+  annotations: {}
+
+readinessProbe:
+  httpGet:
+    path: /api/hc
+    port: http
+  initialDelaySeconds: 60
+  timeoutSeconds: 15
+  failureThreshold: 12
+
+livenessProbe:

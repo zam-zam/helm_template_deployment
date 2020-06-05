@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "app.fullname" . }}
+  annotations:
+    {{- include "app.annotations" . | nindent 4 }}
+  labels:
+    {{- include "app.labels" . | nindent 4 }}
+    {{- if .Values.service.extraLabels }}
+    {{- toYaml .Values.service.extraLabels | trim | nindent 4 }}
+    {{- end }}
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    name: http
+  - port: 9095
+    name: metrics
+  selector:
+    {{- include "app.labels" . | nindent 4 }}

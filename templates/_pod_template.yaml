@@ -1,0 +1,27 @@
+{{- define "app.podTemplate" -}}
+metadata:
+  annotations:
+    {{- include "app.annotations" . | nindent 4 }}
+  labels:
+    {{- include "app.labels" . | nindent 4 }}
+spec:
+  containers:
+  - name: app
+    image: "{{ .Values.image.repository }}:{{ tpl .Values.image.tag . }}"
+    imagePullPolicy: {{ .Values.image.pullPolicy }}
+    ports:
+    - name: http
+      containerPort: 80
+    - name: metrics
+      containerPort: 9095
+    readinessProbe:
+      {{- toYaml .Values.readinessProbe | trim | nindent 6 }}
+    livenessProbe:
+      {{- toYaml .Values.livenessProbe | trim | nindent 6 }}
+    resources:
+      {{- toYaml .Values.resources | trim | nindent 6 }}
+    env:
+    {{- include "app.envs" . | nindent 4 }}
+  affinity:
+    {{- toYaml .Values.affinity | trim | nindent 4 }}
+{{- end }}
